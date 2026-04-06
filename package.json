@@ -11,7 +11,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "cross-env GH_PAGES=true npm run build && node scripts/write-nojekyll.mjs && gh-pages -d dist"
+    "deploy": "node scripts/gh-pages-build.mjs && gh-pages -d dist --nojekyll -o origin"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -26,7 +26,6 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "cross-env": "^10.1.0",
     "eslint": "^9.39.4",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
