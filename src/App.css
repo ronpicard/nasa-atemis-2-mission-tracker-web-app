@@ -264,6 +264,7 @@
 /* —— 3D viz hero (top, largest block) —— */
 .viz-hero {
   margin: 0 -0.35rem 1.35rem;
+  min-height: 100vh;
 }
 
 @media (min-width: 641px) {
@@ -271,6 +272,34 @@
     margin-left: 0;
     margin-right: 0;
   }
+}
+
+.viz-hero .trajectory-viz-card,
+.viz-hero .mcc-trajectory {
+  height: 100%;
+}
+
+.viz-hero .mcc-trajectory {
+  display: flex;
+  flex-direction: column;
+}
+
+.viz-hero .trajectory-viz-split {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.viz-hero .trajectory-canvas-column,
+.viz-hero .trajectory-telemetry-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.viz-hero .trajectory-canvas-wrap {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
 }
 
 .trajectory-viz-card {
@@ -711,15 +740,17 @@
 
 @media (min-width: 960px) {
   .viz-hero .trajectory-canvas-wrap {
-    height: min(82vh, 860px);
-    min-height: 520px;
+    min-height: 0;
   }
 }
 
 @media (max-width: 640px) {
+  .viz-hero {
+    min-height: 100svh;
+  }
+
   .viz-hero .trajectory-canvas-wrap {
-    height: min(56svh, 480px);
-    min-height: 240px;
+    min-height: 0;
     border-radius: var(--radius);
   }
 
