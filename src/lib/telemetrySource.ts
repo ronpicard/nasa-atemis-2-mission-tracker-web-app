@@ -1,14 +1,24 @@
 import {
   DEFAULT_MISSION_HOURS,
   getMissionElapsedHours,
+  getMissionT0,
   interpolateMissionState,
 } from './missionTimeline'
+
+/** Mission calendar time from T₀ + MET (Zulu), for replay / modeled timeline context. */
+export function missionScenarioZulu(metHours: number): string {
+  const t0 = getMissionT0()
+  const t = new Date(t0.getTime() + Math.max(0, metHours) * 3_600_000)
+  return `${t.toISOString().replace('T', ' ').slice(0, 19)} Z`
+}
 
 export type TelemetrySnapshot = {
   /** `arow` = data from AROW API mirror; `modeled` = timeline keyframes (replay or live-clock fallback). */
   source: 'arow' | 'modeled'
   metHours: number
   metFormatted: string
+  /** T₀ + MET as UTC (Zulu) — use in replay/sim to see scenario date & time. */
+  missionScenarioZulu: string
   distEarthMi: number
   distMoonMi: number
   speedMph: number
@@ -72,6 +82,7 @@ export function telemetryAtMetHours(metHours: number, updatedAt = new Date().toI
     source: 'modeled',
     metHours: h,
     metFormatted: formatMET(h),
+    missionScenarioZulu: missionScenarioZulu(h),
     distEarthMi: sim.distEarthMi,
     distMoonMi: sim.distMoonMi,
     speedMph: sim.speedMph,
@@ -97,6 +108,7 @@ async function fetchArow(): Promise<TelemetrySnapshot | null> {
       source: 'arow',
       metHours,
       metFormatted: data.mission_elapsed_time ?? formatMET(metHours),
+      missionScenarioZulu: missionScenarioZulu(metHours),
       distEarthMi:
         data.distance_from_earth_km != null
           ? kmToMi(data.distance_from_earth_km)

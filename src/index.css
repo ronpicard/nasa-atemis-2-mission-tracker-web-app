@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;600;700&display=swap');
 
 :root {
-  --text-strong: #e8fff7;
-  --text: #9db8ad;
-  --muted: #5c7268;
+  --text-strong: #f4fff9;
+  --text: #c2e6d8;
+  --muted: #8eb6a8;
   --bg: #030806;
   --surface: #071210;
   --surface-2: #0a1814;
-  --border: #1d3d32;
-  --border-bright: rgba(65, 255, 179, 0.35);
-  --accent: #41ffb3;
-  --accent-dim: rgba(65, 255, 179, 0.45);
+  --border: #285848;
+  --border-bright: rgba(110, 255, 200, 0.5);
+  --accent: #5dffcb;
+  --accent-dim: rgba(110, 255, 200, 0.78);
   --accent-hot: #ffc14d;
   --hud-amber: #ffc14d;
   --danger: #ff6b6b;

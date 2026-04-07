@@ -7,11 +7,13 @@ type Props = {
   isReplay: boolean
   /** Shown when following live clock but the AROW poll failed (modeled fallback still shown). */
   fetchError?: string | null
+  /** Compact shell for the trajectory card sidebar. */
+  embedded?: boolean
 }
 
 function Metric({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
-    <div className="metric">
+    <div className="metric metric-tile">
       <span className="metric-label">{label}</span>
       <span className="metric-value mono">
         {value}
@@ -21,13 +23,17 @@ function Metric({ label, value, unit }: { label: string; value: string; unit?: s
   )
 }
 
-export function TelemetryPanel({ data, error, isReplay, fetchError }: Props) {
+export function TelemetryPanel({ data, error, isReplay, fetchError, embedded = false }: Props) {
   const t0 = getMissionT0()
+  const shellClass = embedded
+    ? 'telemetry-embedded mcc-interactive-panel'
+    : 'panel mcc-panel telemetry-panel mcc-interactive-panel'
+
   if (error && !data) {
     return (
-      <section className="panel mcc-panel telemetry-panel mcc-interactive-panel">
+      <section className={shellClass}>
         <div className="panel-title-row">
-          <span className="mcc-deco" aria-hidden />
+          {!embedded ? <span className="mcc-deco" aria-hidden /> : null}
           <h2>Telemetry</h2>
         </div>
         <p className="panel-error">{error}</p>
@@ -36,9 +42,9 @@ export function TelemetryPanel({ data, error, isReplay, fetchError }: Props) {
   }
   if (!data) {
     return (
-      <section className="panel mcc-panel telemetry-panel mcc-interactive-panel">
+      <section className={shellClass}>
         <div className="panel-title-row">
-          <span className="mcc-deco" aria-hidden />
+          {!embedded ? <span className="mcc-deco" aria-hidden /> : null}
           <h2>Telemetry</h2>
         </div>
         <p className="muted mcc-blink">ACQUIRING SIGNAL…</p>
@@ -49,11 +55,11 @@ export function TelemetryPanel({ data, error, isReplay, fetchError }: Props) {
   const pct = Math.min(100, Math.round((data.metHours / DEFAULT_MISSION_HOURS) * 100))
 
   return (
-    <section className="panel mcc-panel telemetry-panel mcc-interactive-panel">
+    <section className={shellClass}>
       <div className="panel-header">
         <div className="panel-title-row">
-          <span className="mcc-deco" aria-hidden />
-          <h2>Telemetry &amp; status</h2>
+          {!embedded ? <span className="mcc-deco" aria-hidden /> : null}
+          <h2>{embedded ? 'Telemetry' : 'Telemetry & status'}</h2>
         </div>
         <div className="pill-row">
           {isReplay ? <span className="source-pill replay">REPLAY</span> : null}
@@ -74,6 +80,7 @@ export function TelemetryPanel({ data, error, isReplay, fetchError }: Props) {
 
       <div className="metric-grid">
         <Metric label="Mission elapsed time" value={data.metFormatted} />
+        <Metric label="Mission date &amp; time (Zulu)" value={data.missionScenarioZulu} />
         <Metric label="Phase" value={data.phase} />
         <Metric
           label="Distance from Earth"

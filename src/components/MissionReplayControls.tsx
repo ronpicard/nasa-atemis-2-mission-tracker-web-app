@@ -8,6 +8,8 @@ type Props = {
   scrubHours: number
   setScrub: (h: number) => void
   jumpToLive: () => void
+  /** When true, renders inside the trajectory card (no outer panel shell). */
+  embedded?: boolean
 }
 
 export function MissionReplayControls({
@@ -17,16 +19,19 @@ export function MissionReplayControls({
   scrubHours,
   setScrub,
   jumpToLive,
+  embedded = false,
 }: Props) {
   const maxUi = DEFAULT_MISSION_HOURS
   const sliderValue = followLive ? Math.min(maxUi, metNow) : scrubHours
 
-  return (
-    <section className="panel mcc-panel replay-panel mcc-interactive-panel">
-      <div className="panel-header">
+  const body = (
+    <>
+      <div className="panel-header trajectory-replay-header">
         <div className="panel-title-row">
-          <span className="mcc-deco" aria-hidden />
-          <h2>Timeline replay · modeled state</h2>
+          {!embedded ? <span className="mcc-deco" aria-hidden /> : null}
+          <h2 className={embedded ? 'trajectory-replay-title' : undefined}>
+            Timeline replay · modeled state
+          </h2>
         </div>
         <span className={`source-pill ${followLive ? 'live' : 'sim'}`}>
           {followLive ? 'LIVE CLOCK' : 'REPLAY'}
@@ -64,6 +69,16 @@ export function MissionReplayControls({
           Jump to live clock
         </button>
       </div>
+    </>
+  )
+
+  if (embedded) {
+    return <div className="trajectory-replay-embedded">{body}</div>
+  }
+
+  return (
+    <section className="panel mcc-panel replay-panel mcc-interactive-panel">
+      {body}
     </section>
   )
 }

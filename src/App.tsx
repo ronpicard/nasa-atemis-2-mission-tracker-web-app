@@ -2,9 +2,7 @@ import './App.css'
 import { ClockBar } from './components/ClockBar'
 import { LiveStreamPanel } from './components/LiveStreamPanel'
 import { MissionBriefing } from './components/MissionBriefing'
-import { MissionReplayControls } from './components/MissionReplayControls'
 import { MissionTranscript } from './components/MissionTranscript'
-import { TelemetryPanel } from './components/TelemetryPanel'
 import { TrajectoryView } from './components/TrajectoryView'
 import { useClock } from './hooks/useClock'
 import { useMissionReplay } from './hooks/useMissionReplay'
@@ -28,7 +26,7 @@ function App() {
       <div className="mcc-grid-bg" aria-hidden />
       <div className="mcc-scanlines" aria-hidden />
       <div className="app mcc-deck">
-        <header className="hero mcc-hero">
+        <header className="hero mcc-hero hero-compact">
           <div className="hero-top">
             <p className="eyebrow mono">MCC CONSOLE · ARTEMIS II</p>
             <div className="hero-status-block">
@@ -55,29 +53,28 @@ function App() {
           <ClockBar clocks={clocks} />
         </header>
 
+        <section className="viz-hero" aria-label="Three-dimensional Earth–Moon trajectory">
+          <TrajectoryView
+            progress={progress}
+            telemetry={telemetry}
+            telemetryError={error}
+            isReplay={!replay.followLive}
+            telemetryFetchError={replay.followLive ? error : null}
+            replay={{
+              displayMet: replay.displayMet,
+              metNow: replay.metNow,
+              followLive: replay.followLive,
+              scrubHours: replay.scrubHours,
+              setScrub: replay.setScrub,
+              jumpToLive: replay.jumpToLive,
+            }}
+          />
+        </section>
+
         <MissionBriefing />
 
-        <main className="main-grid">
-          <div className="col-primary">
-            <TrajectoryView progress={progress} replayMode={!replay.followLive} />
-            <MissionReplayControls
-              displayMet={replay.displayMet}
-              metNow={replay.metNow}
-              followLive={replay.followLive}
-              scrubHours={replay.scrubHours}
-              setScrub={replay.setScrub}
-              jumpToLive={replay.jumpToLive}
-            />
-            <TelemetryPanel
-              data={telemetry}
-              error={error}
-              isReplay={!replay.followLive}
-              fetchError={replay.followLive ? error : null}
-            />
-          </div>
-          <div className="col-secondary">
-            <MissionTranscript />
-          </div>
+        <main className="main-grid main-grid-single">
+          <MissionTranscript />
         </main>
 
         <LiveStreamPanel />
