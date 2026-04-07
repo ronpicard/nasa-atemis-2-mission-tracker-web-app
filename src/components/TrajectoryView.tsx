@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Html, Line, OrbitControls, Stars, useTexture } from '@react-three/drei'
+import { Html, Line, OrbitControls, useTexture } from '@react-three/drei'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
@@ -26,6 +26,7 @@ import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import type { TelemetrySnapshot } from '../lib/telemetrySource'
 import { TelemetryPanel } from './TelemetryPanel'
 import { SunRealistic } from './SunRealistic'
+import { MissionStarfield } from './MissionStarfield'
 import { SCENE_EARTH_RADIUS, SCENE_MOON_RADIUS } from '../lib/planetScale'
 
 const EARTH_MAP =
@@ -779,14 +780,11 @@ function TrajectoryScene({
       <hemisphereLight args={['#c4d4f0', '#06090e', 0.32]} />
       <SunLighting />
       <pointLight position={[0, 0, 0]} intensity={0.26} color="#b8cff5" distance={95} decay={2} />
-      <Stars
+      <MissionStarfield
         radius={920}
         depth={320}
-        count={reducedMotion ? 5000 : 16_000}
-        factor={7.5}
-        saturation={0.5}
-        fade={false}
-        speed={reducedMotion ? 0 : 0.35}
+        count={reducedMotion ? 6000 : 18_000}
+        reducedMotion={reducedMotion}
       />
       <SolarSystemBackdrop earth={earth} />
       <AnimatedTrail path={path} reducedMotion={reducedMotion} />
