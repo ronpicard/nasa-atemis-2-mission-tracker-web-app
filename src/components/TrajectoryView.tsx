@@ -43,7 +43,8 @@ function initialRouteCamera(): { position: [number, number, number]; target: [nu
   box.getBoundingSphere(sphere)
 
   // 3/4 view: makes the Earth–Moon arc and return leg easier to read.
-  const viewDir = new THREE.Vector3(0.9, 0.55, 1.25).normalize()
+  // Default to the opposite side so the opening view matches the “rotated” reference.
+  const viewDir = new THREE.Vector3(-0.9, 0.55, -1.25).normalize()
   const dist = Math.max(10.5, sphere.radius * 2.85)
   const pos = sphere.center.clone().add(viewDir.multiplyScalar(dist))
 
@@ -391,7 +392,7 @@ function Spacecraft({
   speedMph: number
 }) {
   const group = useRef<THREE.Group>(null)
-  const rocketScale = 0.45
+  const rocketScale = 0.52
   const labelRef = useRef<THREE.Group>(null)
   const leaderRef = useRef<THREE.Mesh>(null)
   const yAxis = useMemo(() => new THREE.Vector3(0, 1, 0), [])
@@ -763,6 +764,17 @@ function AdaptiveEmbedFraming({
   const tmpDir = useMemo(() => new THREE.Vector3(), [])
 
   useEffect(() => {
+    const embedded =
+      typeof window !== 'undefined' &&
+      (() => {
+        try {
+          return window.self !== window.top
+        } catch {
+          return true
+        }
+      })()
+    if (!embedded) return
+
     // When embedded in a wide/short iframe, the same camera position reads “zoomed out”.
     // Tighten framing for ultra-wide aspects by reducing FOV and pulling the camera in slightly.
     const aspect = size.width / Math.max(1, size.height)
