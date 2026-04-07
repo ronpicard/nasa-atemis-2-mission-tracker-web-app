@@ -749,6 +749,45 @@ function RegisterViewReset({
   return null
 }
 
+function AdaptiveEmbedFraming({
+  initialPosition,
+  initialTarget,
+}: {
+  initialPosition: [number, number, number]
+  initialTarget: [number, number, number]
+}) {
+  const camera = useThree((s) => s.camera as THREE.PerspectiveCamera)
+  const size = useThree((s) => s.size)
+  const tmpTarget = useMemo(() => new THREE.Vector3(), [])
+  const tmpCam = useMemo(() => new THREE.Vector3(), [])
+  const tmpDir = useMemo(() => new THREE.Vector3(), [])
+
+  useEffect(() => {
+    // When embedded in a wide/short iframe, the same camera position reads “zoomed out”.
+    // Tighten framing for ultra-wide aspects by reducing FOV and pulling the camera in slightly.
+    const aspect = size.width / Math.max(1, size.height)
+    const wideT = THREE.MathUtils.clamp((aspect - 1.7) / 1.1, 0, 1) // starts affecting ~1.7:1+
+    const desiredFov = THREE.MathUtils.lerp(44, 36, wideT)
+    camera.fov = desiredFov
+    camera.updateProjectionMatrix()
+
+    // Pull in along view vector, but keep target fixed.
+    tmpTarget.set(...initialTarget)
+    tmpCam.set(...initialPosition)
+    tmpDir.copy(tmpCam).sub(tmpTarget)
+    const baseDist = tmpDir.length()
+    if (baseDist > 1e-6) {
+      const desiredDist = baseDist * THREE.MathUtils.lerp(1, 0.82, wideT)
+      tmpDir.setLength(desiredDist)
+      camera.position.copy(tmpTarget).add(tmpDir)
+    } else {
+      camera.position.set(...initialPosition)
+    }
+  }, [camera, initialPosition, initialTarget, size.height, size.width, tmpCam, tmpDir, tmpTarget])
+
+  return null
+}
+
 function TrajectoryScene({
   progress,
   reducedMotion,
@@ -780,6 +819,7 @@ function TrajectoryScene({
       <hemisphereLight args={['#c4d4f0', '#06090e', 0.32]} />
       <SunLighting />
       <pointLight position={[0, 0, 0]} intensity={0.26} color="#b8cff5" distance={95} decay={2} />
+      <AdaptiveEmbedFraming initialPosition={initialPosition} initialTarget={initialTarget} />
       <MissionStarfield
         radius={920}
         depth={320}
