@@ -425,6 +425,22 @@
     transform 0.25s ease;
 }
 
+.crew-photo {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  object-position: center 15%;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--border-bright) 45%, var(--border));
+  background: rgba(0, 0, 0, 0.35);
+  margin-bottom: 0.6rem;
+  filter: saturate(1.04) contrast(1.05);
+}
+
+.crew-card:hover .crew-photo {
+  border-color: var(--border-bright);
+}
+
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .crew-card:hover {
     border-color: rgba(65, 255, 179, 0.35);
@@ -637,13 +653,13 @@
 .trajectory-canvas-wrap {
   position: relative;
   width: 100%;
-  height: min(68vh, 620px);
+  height: min(78vh, 760px);
   min-height: 300px;
   border-radius: 2px;
   border: 1px solid var(--border);
   overflow: hidden;
   background: var(--traj-bg);
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.85);
 }
 
 .trajectory-reset-view {
@@ -695,8 +711,8 @@
 
 @media (min-width: 960px) {
   .viz-hero .trajectory-canvas-wrap {
-    height: min(72vh, 680px);
-    min-height: 380px;
+    height: min(82vh, 860px);
+    min-height: 520px;
   }
 }
 
@@ -1087,7 +1103,7 @@
   color: var(--hud-amber);
 }
 
-/* —— Streams (YouTube embeds + links) —— */
+/* —— Streams (links) —— */
 .stream-title h2 {
   margin: 0;
 }
@@ -1097,53 +1113,6 @@
   color: color-mix(in srgb, var(--text) 55%, var(--muted));
   margin: 0.35rem 0 1rem;
   line-height: 1.5;
-}
-
-.stream-embed-grid {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 720px) {
-  .stream-embed-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.stream-embed-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.45);
-  box-shadow: inset 0 0 24px rgba(65, 255, 179, 0.04);
-}
-
-.stream-embed-title {
-  margin: 0;
-  padding: 0.5rem 0.65rem;
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  border-bottom: 1px solid var(--border);
-  background: rgba(0, 0, 0, 0.35);
-}
-
-.stream-embed-aspect {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  background: #000;
-}
-
-.stream-embed-aspect iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
 }
 
 .stream-link-grid-below {

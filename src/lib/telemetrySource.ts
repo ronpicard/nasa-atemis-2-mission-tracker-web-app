@@ -38,13 +38,15 @@ function pad(n: number) {
 }
 
 export function formatMET(hours: number): string {
-  const totalSec = Math.floor(hours * 3600)
-  const d = Math.floor(totalSec / 86400)
-  const h = Math.floor((totalSec % 86400) / 3600)
-  const m = Math.floor((totalSec % 3600) / 60)
-  const s = totalSec % 60
-  if (d > 0) return `${d}d ${pad(h)}:${pad(m)}:${pad(s)}`
-  return `${pad(h)}:${pad(m)}:${pad(s)}`
+  const totalMs = Math.floor(Math.max(0, hours) * 3_600_000)
+  const d = Math.floor(totalMs / 86_400_000)
+  const h = Math.floor((totalMs % 86_400_000) / 3_600_000)
+  const m = Math.floor((totalMs % 3_600_000) / 60_000)
+  const s = Math.floor((totalMs % 60_000) / 1000)
+  const cs = Math.floor((totalMs % 1000) / 10) // centiseconds (2 digits)
+  const cs2 = cs.toString().padStart(2, '0')
+  if (d > 0) return `${d}d ${pad(h)}:${pad(m)}:${pad(s)}.${cs2}`
+  return `${pad(h)}:${pad(m)}:${pad(s)}.${cs2}`
 }
 
 type ArowApiShape = {

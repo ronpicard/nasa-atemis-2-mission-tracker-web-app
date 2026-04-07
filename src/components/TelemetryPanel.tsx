@@ -1,4 +1,5 @@
-import type { TelemetrySnapshot } from '../lib/telemetrySource'
+import { useEffect, useMemo, useState } from 'react'
+import { formatMET, missionScenarioZulu, type TelemetrySnapshot } from '../lib/telemetrySource'
 import { DEFAULT_MISSION_HOURS, getMissionT0 } from '../lib/missionTimeline'
 
 type Props = {
@@ -29,6 +30,23 @@ export function TelemetryPanel({ data, error, isReplay, fetchError, embedded = f
     ? 'telemetry-embedded mcc-interactive-panel'
     : 'panel mcc-panel telemetry-panel mcc-interactive-panel'
 
+  const [nowMs, setNowMs] = useState(() => Date.now())
+  useEffect(() => {
+    const id = window.setInterval(() => setNowMs(Date.now()), 100)
+    return () => window.clearInterval(id)
+  }, [])
+
+  const metHoursLive = useMemo(() => {
+    if (!data) return 0
+    // Replay already has an exact MET; in live mode, interpolate between telemetry polls.
+    if (isReplay) return data.metHours
+    const base = data.metHours
+    const updatedAtMs = Date.parse(data.updatedAt)
+    if (!Number.isFinite(updatedAtMs)) return base
+    const deltaHours = Math.max(0, nowMs - updatedAtMs) / 3_600_000
+    return base + deltaHours
+  }, [data, isReplay, nowMs])
+
   if (error && !data) {
     return (
       <section className={shellClass}>
@@ -52,7 +70,9 @@ export function TelemetryPanel({ data, error, isReplay, fetchError, embedded = f
     )
   }
 
-  const pct = Math.min(100, Math.round((data.metHours / DEFAULT_MISSION_HOURS) * 100))
+  const metLabel = formatMET(metHoursLive)
+  const scenarioZulu = missionScenarioZulu(metHoursLive)
+  const pct = Math.min(100, Math.round((metHoursLive / DEFAULT_MISSION_HOURS) * 100))
 
   return (
     <section className={shellClass}>
@@ -79,8 +99,8 @@ export function TelemetryPanel({ data, error, isReplay, fetchError, embedded = f
       </div>
 
       <div className="metric-grid">
-        <Metric label="Mission elapsed time" value={data.metFormatted} />
-        <Metric label="Mission date &amp; time (Zulu)" value={data.missionScenarioZulu} />
+        <Metric label="Mission elapsed time" value={metLabel} />
+        <Metric label="Mission date &amp; time (Zulu)" value={scenarioZulu} />
         <Metric label="Phase" value={data.phase} />
         <Metric
           label="Distance from Earth"

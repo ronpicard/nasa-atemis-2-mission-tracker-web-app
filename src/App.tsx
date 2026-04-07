@@ -15,7 +15,8 @@ function App() {
   const { data, error } = useTelemetry(4000)
   const replay = useMissionReplay()
 
-  const progress = Math.min(1, replay.displayMet / DEFAULT_MISSION_HOURS)
+  // Keep 3D path clamped after mission end, but allow clocks/telemetry to keep running.
+  const progress = Math.min(1, Math.min(DEFAULT_MISSION_HOURS, replay.displayMet) / DEFAULT_MISSION_HOURS)
   const telemetry =
     !replay.followLive
       ? telemetryAtMetHours(replay.displayMet)
@@ -29,17 +30,6 @@ function App() {
         <header className="hero mcc-hero hero-compact">
           <div className="hero-top">
             <p className="eyebrow mono">MCC CONSOLE · ARTEMIS II</p>
-            <div className="hero-status-block">
-              <span
-                className="hero-status mcc-blink"
-                title="This page loaded and local timers and data hooks are running. It is not a statement about NASA mission communications or the Deep Space Network."
-              >
-                CONSOLE READY
-              </span>
-              <p className="hero-status-caption">
-                Local dashboard — not spacecraft or DSN status. Hover the badge for detail.
-              </p>
-            </div>
           </div>
           <h1 className="hero-title">Artemis II Mission Tracker</h1>
           <p className="lede">

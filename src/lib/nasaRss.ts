@@ -62,7 +62,8 @@ function parseItemsFromXml(xml: string): TranscriptLine[] {
 /** WordPress RSS: page 1 = newest posts; higher page numbers = older history. */
 export async function fetchNasaFeedPage(page: number): Promise<{ lines: TranscriptLine[]; rawItemCount: number }> {
   const url = page <= 1 ? NASA_FEED : `${NASA_FEED}?paged=${page}`
-  const res = await fetch(url)
+  // NASA's feed currently sends `Access-Control-Allow-Origin: *`, so fetch directly.
+  const res = await fetch(url, { cache: 'no-store' })
   if (!res.ok) throw new Error(`RSS ${res.status}`)
   const xml = await res.text()
   const doc = new DOMParser().parseFromString(xml, 'text/xml')

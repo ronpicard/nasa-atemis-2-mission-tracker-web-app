@@ -21,8 +21,9 @@ export function MissionReplayControls({
   jumpToLive,
   embedded = false,
 }: Props) {
-  const maxUi = DEFAULT_MISSION_HOURS
-  const sliderValue = followLive ? Math.min(maxUi, metNow) : scrubHours
+  // Keep slider usable after mission ends: extend range to the nearest day past current MET.
+  const maxUi = Math.max(DEFAULT_MISSION_HOURS, Math.ceil(Math.max(metNow, scrubHours) / 24) * 24)
+  const sliderValue = followLive ? Math.min(maxUi, metNow) : Math.min(maxUi, scrubHours)
 
   const body = (
     <>
@@ -59,8 +60,8 @@ export function MissionReplayControls({
           <span>T+ {formatMET(displayMet)}</span>
           <span className="replay-meta-sub">
             {followLive
-              ? `CAP ${formatMET(Math.min(maxUi, metNow))}`
-              : `SCRUB ${formatMET(scrubHours)}`}
+              ? `NOW ${formatMET(Math.min(maxUi, metNow))}`
+              : `SCRUB ${formatMET(Math.min(maxUi, scrubHours))}`}
           </span>
         </div>
       </div>

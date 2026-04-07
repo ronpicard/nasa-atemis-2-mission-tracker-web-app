@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { DEFAULT_MISSION_HOURS, getMissionElapsedHours } from '../lib/missionTimeline'
+import { getMissionElapsedHours } from '../lib/missionTimeline'
 
 export function useMissionReplay() {
   const [now, setNow] = useState(() => new Date())
@@ -13,11 +13,12 @@ export function useMissionReplay() {
 
   const metNow = getMissionElapsedHours(now)
 
-  const displayMet = followLive ? Math.min(DEFAULT_MISSION_HOURS, metNow) : scrubHours
+  // After the modeled profile ends, keep the clock running but clamp the 3D path at the end.
+  const displayMet = followLive ? metNow : scrubHours
 
   const setScrub = useCallback((h: number) => {
     setFollowLive(false)
-    setScrubHours(Math.max(0, Math.min(DEFAULT_MISSION_HOURS, h)))
+    setScrubHours(Math.max(0, h))
   }, [])
 
   const jumpToLive = useCallback(() => {

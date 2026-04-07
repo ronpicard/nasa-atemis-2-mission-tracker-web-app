@@ -7,7 +7,10 @@ export type ClockStrings = {
 }
 
 function formatZulu(d: Date) {
-  return d.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' Z')
+  // Force 2-digit fractional seconds.
+  const iso = d.toISOString() // e.g. 2026-04-07T03:42:20.415Z
+  const trimmed = iso.replace(/\.(\d{2})\dZ$/, '.$1Z')
+  return trimmed.replace('T', ' ').replace('Z', ' Z')
 }
 
 function formatLocal(d: Date) {
@@ -19,11 +22,12 @@ function formatLocal(d: Date) {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
+    fractionalSecondDigits: 2,
     hour12: false,
   })
 }
 
-export function useClock(tickMs = 1000) {
+export function useClock(tickMs = 100) {
   const [clocks, setClocks] = useState<ClockStrings>(() => {
     const d = new Date()
     return {

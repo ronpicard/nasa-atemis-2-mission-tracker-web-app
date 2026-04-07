@@ -1,8 +1,14 @@
+import reidWisemanPhoto from '../assets/crew/reid-wiseman.jpg'
+import victorGloverPhoto from '../assets/crew/victor-glover.jpg'
+import christinaKochPhoto from '../assets/crew/christina-koch.jpg'
+import jeremyHansenPhoto from '../assets/crew/jeremy-hansen.jpg'
+
 const CREW = [
   {
     name: 'Reid Wiseman',
     role: 'Commander',
     agency: 'NASA',
+    photo: reidWisemanPhoto,
     note: 'Leads the crew and Orion operations for this test flight.',
     links: [
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/reid-wiseman-1a353819' },
@@ -13,6 +19,7 @@ const CREW = [
     name: 'Victor Glover',
     role: 'Pilot',
     agency: 'NASA',
+    photo: victorGloverPhoto,
     note: 'Spacecraft systems and flight operations from the cabin.',
     links: [
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/vicglover' },
@@ -23,6 +30,7 @@ const CREW = [
     name: 'Christina Koch',
     role: 'Mission Specialist',
     agency: 'NASA',
+    photo: christinaKochPhoto,
     note: 'Science, robotics, and exploration tasks during the lunar voyage.',
     links: [
       { label: 'NASA bio', href: 'https://www.nasa.gov/people/christina-hammock-koch/' },
@@ -32,6 +40,7 @@ const CREW = [
     name: 'Jeremy Hansen',
     role: 'Mission Specialist',
     agency: 'CSA',
+    photo: jeremyHansenPhoto,
     note: 'Canadian Space Agency astronaut; lunar campaign partner on Artemis.',
     links: [
       { label: 'CSA bio', href: 'https://www.asc-csa.gc.ca/eng/astronauts/canadian/active/jeremy-hansen.asp' },
@@ -87,6 +96,7 @@ export function MissionBriefing() {
       <ul className="crew-list">
         {CREW.map((c) => (
           <li key={c.name} className="crew-card">
+            <img className="crew-photo" src={c.photo} alt={`${c.name} official portrait`} loading="lazy" />
             <div className="crew-name">{c.name}</div>
             <div className="crew-role mono">
               {c.role} · {c.agency}
