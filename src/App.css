@@ -233,7 +233,7 @@
 .hero-title {
   margin: 0 0 0.5rem;
   font-family: var(--display);
-  font-size: clamp(1.55rem, 4.2vw, 2.4rem);
+  font-size: clamp(1.15rem, 3.2vw + 0.6rem, 2.35rem);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -247,6 +247,7 @@
   max-width: 52rem;
   color: var(--muted);
   line-height: 1.55;
+  font-size: clamp(0.82rem, 1.35vw + 0.55rem, 1rem);
 }
 
 @media (max-width: 640px) {
@@ -567,7 +568,7 @@
 
 .panel h2 {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: clamp(0.76rem, 1.1vw + 0.55rem, 0.95rem);
   font-weight: 600;
   color: var(--text-strong);
   font-family: var(--display);
@@ -618,12 +619,13 @@
 
 .trajectory-head h2 {
   margin: 0;
+  font-size: clamp(0.72rem, 1.4vw + 0.45rem, 0.95rem);
 }
 
 .trajectory-caption {
   margin: 0.35rem 0 0;
   flex: 1 1 100%;
-  font-size: 0.8rem;
+  font-size: clamp(0.65rem, 1.1vw + 0.42rem, 0.82rem);
   color: color-mix(in srgb, var(--text) 50%, var(--muted));
   line-height: 1.45;
 }
@@ -713,21 +715,27 @@
 .traj-globe-label,
 .traj-ship-hud {
   font-family: var(--mono);
-  font-size: clamp(9px, 0.85vw, 11px);
-  letter-spacing: 0.08em;
+  font-size: clamp(6px, 1.1vw + 4px, 10px);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #e8fff4;
-  background: rgba(4, 18, 14, 0.92);
-  border: 1px solid rgba(120, 255, 210, 0.55);
+  color: rgba(232, 255, 244, 0.92);
+  /* Nearly invisible chrome — readability from text + blur only */
+  background: rgba(4, 18, 14, 0.055);
+  border: 1px solid rgba(120, 255, 210, 0.07);
   border-radius: 4px;
-  padding: clamp(0.18rem, 0.32vw, 0.24rem) clamp(0.34rem, 0.55vw, 0.48rem);
+  padding: clamp(0.12rem, 0.25vw, 0.2rem) clamp(0.26rem, 0.45vw, 0.4rem);
   white-space: nowrap;
-  box-shadow: 0 0 18px rgba(100, 255, 190, 0.18);
+  box-shadow: none;
   pointer-events: none;
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.85),
+    0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
 .traj-globe-label {
-  font-size: 9px;
+  font-size: clamp(6px, 1vw + 4px, 9px);
   max-width: 9rem;
   white-space: normal;
   line-height: 1.25;
@@ -736,6 +744,11 @@
 .traj-ship-hud {
   text-align: center;
   line-height: 1.35;
+  background: rgba(4, 18, 14, 0.035);
+  border-color: rgba(120, 255, 210, 0.055);
+  color: rgba(232, 255, 244, 0.94);
+  backdrop-filter: blur(12px) saturate(1.08);
+  -webkit-backdrop-filter: blur(12px) saturate(1.08);
 }
 
 @media (min-width: 960px) {
@@ -755,12 +768,7 @@
   }
 
   .trajectory-viz-card .trajectory-head h2 {
-    font-size: 0.82rem;
     letter-spacing: 0.05em;
-  }
-
-  .trajectory-caption {
-    font-size: 0.75rem;
   }
 }
 
@@ -795,7 +803,7 @@
 
 .trajectory-replay-title {
   margin: 0;
-  font-size: 0.84rem;
+  font-size: clamp(0.68rem, 1vw + 0.48rem, 0.84rem);
   font-weight: 600;
   font-family: var(--display);
   letter-spacing: 0.07em;
@@ -806,7 +814,7 @@
 /* —— Replay —— */
 .replay-panel .replay-help,
 .trajectory-replay-embedded .replay-help {
-  font-size: 0.82rem;
+  font-size: clamp(0.72rem, 0.9vw + 0.5rem, 0.82rem);
   color: var(--muted);
   line-height: 1.5;
   margin: 0 0 0.85rem;
@@ -820,7 +828,7 @@
 
 .replay-label {
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: clamp(0.74rem, 1vw + 0.48rem, 0.85rem);
 }
 
 .replay-slider {

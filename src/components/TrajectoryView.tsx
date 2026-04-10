@@ -392,7 +392,8 @@ function Spacecraft({
   speedMph: number
 }) {
   const group = useRef<THREE.Group>(null)
-  const rocketScale = 0.52
+  /** Large enough to read easily at typical zoom. */
+  const rocketScale = 1.08
   const labelRef = useRef<THREE.Group>(null)
   const leaderRef = useRef<THREE.Mesh>(null)
   const yAxis = useMemo(() => new THREE.Vector3(0, 1, 0), [])
@@ -540,20 +541,20 @@ function Spacecraft({
         </mesh>
         <mesh position={[0, 0, plume2Z]} rotation={[Math.PI / 2, 0, 0]}>
           <coneGeometry args={[0.18, PLUME2_H, 18]} />
-          <meshBasicMaterial color="#ffb24a" toneMapped={false} transparent opacity={0.35} />
+          <meshBasicMaterial color="#e89430" toneMapped={false} />
         </mesh>
 
-        <pointLight distance={12} intensity={3.0} color="#ffffff" decay={2} />
-        <pointLight distance={6} intensity={2.0} color="#ff8a3d" decay={2} />
+        <pointLight distance={14} intensity={2.1} color="#ffffff" decay={2} />
+        <pointLight distance={8} intensity={1.35} color="#ff8a3d" decay={2} />
       </group>
 
       {/* Leader + label (kept unscaled so it stays readable) */}
       <mesh ref={leaderRef}>
         <cylinderGeometry args={[0.012, 0.012, 1, 10]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.85} toneMapped={false} />
+        <meshBasicMaterial color="#a8ffe8" transparent opacity={0.42} toneMapped={false} depthWrite={false} />
       </mesh>
       <group ref={labelRef}>
-        <Html center distanceFactor={13} style={{ pointerEvents: 'none' }}>
+        <Html center distanceFactor={15} style={{ pointerEvents: 'none' }}>
           <div className="traj-ship-hud">
             <div>Earth {distEarthMi.toLocaleString()} mi</div>
             <div>{speedMph.toLocaleString()} mph</div>
