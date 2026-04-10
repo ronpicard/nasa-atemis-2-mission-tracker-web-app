@@ -22,9 +22,12 @@
   --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --display: 'Orbitron', var(--sans);
   --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
 
+/* Fluid root size: px+vw only (no rem here — avoids :root/rem circularity in some engines). */
+html {
   font-family: var(--sans);
-  font-size: clamp(13px, 0.28rem + 2.1vw, 17px);
+  font-size: clamp(13px, 2.1vw + 4px, 17px);
   line-height: 1.45;
   color: var(--text);
   background-color: var(--bg);
@@ -32,6 +35,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Mobile: layout viewport = visual viewport (avoids “stuck zoom” / wrong vw on iOS). */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 *,

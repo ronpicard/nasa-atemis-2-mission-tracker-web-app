@@ -207,7 +207,7 @@ function EarthWithMarkers({
     // Float the label away from the surface along the normal + a small lateral nudge.
     return launchDir
       .clone()
-      .multiplyScalar(radius * 1.5)
+      .multiplyScalar(radius * 1.68)
       .add(labelSide.clone().multiplyScalar(0.34))
       .add(labelUp.clone().multiplyScalar(0.34))
   }, [labelSide, labelUp, launchDir, radius])
@@ -215,7 +215,7 @@ function EarthWithMarkers({
   const landLabelPos = useMemo(() => {
     return landDir
       .clone()
-      .multiplyScalar(radius * 1.5)
+      .multiplyScalar(radius * 1.68)
       .add(labelSide.clone().multiplyScalar(-0.36))
       .add(labelUp.clone().multiplyScalar(0.32))
   }, [labelSide, labelUp, landDir, radius])
@@ -381,6 +381,10 @@ function SolarSystemBackdrop({ earth }: { earth: [number, number, number] }) {
 
 /** Extra rotation (rad) of ship HUD around local +Y — swings label clockwise in typical views. */
 const SHIP_HUD_LABEL_YAW_RAD = -0.72
+/** Radial push along away-from-Earth (local); larger = longer leader + text farther from rocket. */
+const SHIP_HUD_LABEL_RADIAL = 3.45
+/** Extra local +Y on HUD anchor after radial step. */
+const SHIP_HUD_LABEL_LIFT_Y = 2.12
 
 function Spacecraft({
   progress,
@@ -426,8 +430,8 @@ function Spacecraft({
     // Local-space label: world "away from Earth" → ship local, then lift and yaw so the HUD
     // sits farther around the flank (clears the nose / top-left overlap from most views).
     tmpQuat.copy(g.quaternion).invert()
-    tmpLabel.copy(tmpDir).applyQuaternion(tmpQuat).normalize().multiplyScalar(2.6)
-    tmpLabel.y += 1.9
+    tmpLabel.copy(tmpDir).applyQuaternion(tmpQuat).normalize().multiplyScalar(SHIP_HUD_LABEL_RADIAL)
+    tmpLabel.y += SHIP_HUD_LABEL_LIFT_Y
     tmpLabel.applyAxisAngle(yAxis, SHIP_HUD_LABEL_YAW_RAD)
 
     const lbl = labelRef.current
@@ -457,16 +461,20 @@ function Spacecraft({
   const SKIRT_L = 0.15
   const ENGINE_L = 0.1
   const SEAM = 0.008
+  /** Pull nozzle forward so it visibly seats into the skirt (cone/cylinder bounds leave a hairline gap otherwise). */
+  const NOZZLE_INTO_SKIRT = 0.048
+  /** Skirt narrow end must sit slightly into the service aft face or a black seam shows between cylinders. */
+  const SKIRT_INTO_SERVICE = 0.042
 
   const crewZ = 0
   const noseZ = crewZ + CREW_L / 2 + NOSE_L / 2 - SEAM
   const serviceZ = crewZ - CREW_L / 2 - SERVICE_L / 2 + SEAM
-  const skirtZ = serviceZ - SERVICE_L / 2 - SKIRT_L / 2 + SEAM
-  // Flush: engine +Z face meets skirt −Z (no SEAM gap); plumes use engine aft as anchor.
-  const engineZ = skirtZ - SKIRT_L / 2 - ENGINE_L / 2
+  const skirtZ = serviceZ - SERVICE_L / 2 - SKIRT_L / 2 - SKIRT_INTO_SERVICE
+  // Engine shifted +Z slightly into skirt base; plumes still anchor from engine aft.
+  const engineZ = skirtZ - SKIRT_L / 2 - ENGINE_L / 2 + NOZZLE_INTO_SKIRT
   const engineAftZ = engineZ - ENGINE_L / 2
-  const PLUME1_H = 0.32
-  const PLUME2_H = 0.46
+  const PLUME1_H = 0.24
+  const PLUME2_H = 0.34
   // Cone apex is toward +Z after π/2 X rot; center so apex sits on engine bell (−Z end of engine).
   const plume1Z = engineAftZ - PLUME1_H / 2
   const plume2Z = engineAftZ - PLUME2_H / 2
@@ -536,16 +544,16 @@ function Spacecraft({
         </mesh>
         {/* Exhaust: apex at engine bell, base toward −Z (ConeGeometry apex at +Y → +Z) */}
         <mesh position={[0, 0, plume1Z]} rotation={[Math.PI / 2, 0, 0]}>
-          <coneGeometry args={[0.11, PLUME1_H, 18]} />
+          <coneGeometry args={[0.082, PLUME1_H, 18]} />
           <meshBasicMaterial color="#ff7a2f" toneMapped={false} />
         </mesh>
         <mesh position={[0, 0, plume2Z]} rotation={[Math.PI / 2, 0, 0]}>
-          <coneGeometry args={[0.18, PLUME2_H, 18]} />
+          <coneGeometry args={[0.135, PLUME2_H, 18]} />
           <meshBasicMaterial color="#e89430" toneMapped={false} />
         </mesh>
 
         <pointLight distance={14} intensity={2.1} color="#ffffff" decay={2} />
-        <pointLight distance={8} intensity={1.35} color="#ff8a3d" decay={2} />
+        <pointLight distance={8} intensity={1.05} color="#ff8a3d" decay={2} />
       </group>
 
       {/* Leader + label (kept unscaled so it stays readable) */}
@@ -554,7 +562,7 @@ function Spacecraft({
         <meshBasicMaterial color="#a8ffe8" transparent opacity={0.42} toneMapped={false} depthWrite={false} />
       </mesh>
       <group ref={labelRef}>
-        <Html center distanceFactor={15} style={{ pointerEvents: 'none' }}>
+        <Html center distanceFactor={17} style={{ pointerEvents: 'none' }}>
           <div className="traj-ship-hud">
             <div>Earth {distEarthMi.toLocaleString()} mi</div>
             <div>{speedMph.toLocaleString()} mph</div>

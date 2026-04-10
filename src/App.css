@@ -265,7 +265,12 @@
 /* —— 3D viz hero (top, largest block) —— */
 .viz-hero {
   margin: 0 -0.35rem 1.35rem;
+  /* svh/dvh: stable viewport on mobile; avoids %height bugs vs min-height-only parents (Safari). */
   min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 641px) {
@@ -275,12 +280,16 @@
   }
 }
 
-.viz-hero .trajectory-viz-card,
-.viz-hero .mcc-trajectory {
-  height: 100%;
+/* Fill the hero strip with flex — do NOT use height:100% (breaks when parent only has min-height). */
+.viz-hero > * {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
+.viz-hero .trajectory-viz-card,
 .viz-hero .mcc-trajectory {
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -758,10 +767,6 @@
 }
 
 @media (max-width: 640px) {
-  .viz-hero {
-    min-height: 100svh;
-  }
-
   .viz-hero .trajectory-canvas-wrap {
     min-height: 0;
     border-radius: var(--radius);
