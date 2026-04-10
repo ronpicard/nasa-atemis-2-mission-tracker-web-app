@@ -21,9 +21,9 @@ export function MissionReplayControls({
   jumpToLive,
   embedded = false,
 }: Props) {
-  // Keep slider usable after mission ends: extend range to the nearest day past current MET.
-  const maxUi = Math.max(DEFAULT_MISSION_HOURS, Math.ceil(Math.max(metNow, scrubHours) / 24) * 24)
-  const sliderValue = followLive ? Math.min(maxUi, metNow) : Math.min(maxUi, scrubHours)
+  // Live mode follows wrapped MET (0…duration); replay scrub can extend past nominal end for inspection.
+  const maxScrub = Math.max(DEFAULT_MISSION_HOURS, Math.ceil(Math.max(metNow, scrubHours) / 24) * 24)
+  const sliderValue = followLive ? displayMet : Math.min(maxScrub, scrubHours)
 
   const body = (
     <>
@@ -40,7 +40,10 @@ export function MissionReplayControls({
       </div>
       <p className="replay-help">
         Scrub mission elapsed time to move Orion along the 3D path. Values follow the app’s reference
-        timeline (not official ephemeris). “Live clock” tracks real time from mission T0.
+        timeline (not official ephemeris). “Live clock” tracks real time from mission T0
+        {followLive && metNow >= DEFAULT_MISSION_HOURS
+          ? `; after ${DEFAULT_MISSION_HOURS}h MET it loops this modeled timeline from 0.`
+          : '.'}
       </p>
       <div className="replay-row">
         <label className="replay-label mono" htmlFor="met-scrub">
@@ -50,7 +53,7 @@ export function MissionReplayControls({
           id="met-scrub"
           type="range"
           min={0}
-          max={maxUi}
+          max={followLive ? DEFAULT_MISSION_HOURS : maxScrub}
           step={0.25}
           value={sliderValue}
           onChange={(e) => setScrub(Number(e.target.value))}
@@ -60,8 +63,8 @@ export function MissionReplayControls({
           <span>T+ {formatMET(displayMet)}</span>
           <span className="replay-meta-sub">
             {followLive
-              ? `NOW ${formatMET(Math.min(maxUi, metNow))}`
-              : `SCRUB ${formatMET(Math.min(maxUi, scrubHours))}`}
+              ? `WALL ${formatMET(metNow)}`
+              : `SCRUB ${formatMET(Math.min(maxScrub, scrubHours))}`}
           </span>
         </div>
       </div>

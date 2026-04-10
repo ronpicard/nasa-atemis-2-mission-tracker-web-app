@@ -31,6 +31,9 @@ html {
   line-height: 1.45;
   color: var(--text);
   background-color: var(--bg);
+  min-height: 100%;
+  min-height: 100dvh;
+  width: 100%;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -48,7 +51,9 @@ html {
 
 body {
   margin: 0;
-  min-height: 100svh;
+  min-height: 100%;
+  min-height: 100dvh;
+  width: 100%;
 }
 
 #root {
@@ -57,7 +62,8 @@ body {
   margin: 0;
   text-align: left;
   border: none;
-  min-height: 100svh;
+  min-height: 100%;
+  min-height: 100dvh;
 }
 
 h1,

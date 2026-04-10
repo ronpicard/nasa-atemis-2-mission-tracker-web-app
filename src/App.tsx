@@ -15,12 +15,12 @@ function App() {
   const { data, error } = useTelemetry(4000)
   const replay = useMissionReplay()
 
-  // Keep 3D path clamped after mission end, but allow clocks/telemetry to keep running.
   const progress = Math.min(1, Math.min(DEFAULT_MISSION_HOURS, replay.displayMet) / DEFAULT_MISSION_HOURS)
+  // During live flight use AROW when available; after nominal end, wall MET no longer matches the model — use wrapped modeled state only.
   const telemetry =
-    !replay.followLive
-      ? telemetryAtMetHours(replay.displayMet)
-      : (data ?? telemetryAtMetHours(replay.displayMet))
+    replay.followLive && replay.metNow < DEFAULT_MISSION_HOURS
+      ? (data ?? telemetryAtMetHours(replay.displayMet))
+      : telemetryAtMetHours(replay.displayMet)
 
   return (
     <div className="mcc-root">
@@ -49,7 +49,9 @@ function App() {
             telemetry={telemetry}
             telemetryError={error}
             isReplay={!replay.followLive}
-            telemetryFetchError={replay.followLive ? error : null}
+            telemetryFetchError={
+              replay.followLive && replay.metNow < DEFAULT_MISSION_HOURS ? error : null
+            }
             replay={{
               displayMet: replay.displayMet,
               metNow: replay.metNow,

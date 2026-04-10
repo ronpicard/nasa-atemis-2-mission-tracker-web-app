@@ -8,7 +8,7 @@ type Props = {
   isReplay: boolean
   /** Shown when following live clock but the AROW poll failed (modeled fallback still shown). */
   fetchError?: string | null
-  /** Compact shell for the trajectory card sidebar. */
+  /** Compact shell when embedded under the trajectory canvas. */
   embedded?: boolean
 }
 
@@ -38,8 +38,8 @@ export function TelemetryPanel({ data, error, isReplay, fetchError, embedded = f
 
   const metHoursLive = useMemo(() => {
     if (!data) return 0
-    // Replay already has an exact MET; in live mode, interpolate between telemetry polls.
-    if (isReplay) return data.metHours
+    // Replay / modeled snapshots use fixed MET. Only advance between AROW polls in true live flight.
+    if (isReplay || data.source !== 'arow') return data.metHours
     const base = data.metHours
     const updatedAtMs = Date.parse(data.updatedAt)
     if (!Number.isFinite(updatedAtMs)) return base

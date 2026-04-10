@@ -45,7 +45,8 @@ function initialRouteCamera(): { position: [number, number, number]; target: [nu
   // 3/4 view: makes the Earth–Moon arc and return leg easier to read.
   // Default to the opposite side so the opening view matches the “rotated” reference.
   const viewDir = new THREE.Vector3(-0.9, 0.55, -1.25).normalize()
-  const dist = Math.max(10.5, sphere.radius * 2.85)
+  /** Slightly tighter than full-scene fit so the mission reads larger on first paint / reset. */
+  const dist = Math.max(8.85, sphere.radius * 2.38)
   const pos = sphere.center.clone().add(viewDir.multiplyScalar(dist))
 
   return {
@@ -458,26 +459,33 @@ function Spacecraft({
   const NOSE_L = 0.2
   const CREW_L = 0.32
   const SERVICE_L = 0.22
-  const SKIRT_L = 0.15
+  /** Must equal skirt `coneGeometry` height or stack positions drift from real mesh bounds. */
+  const SKIRT_L = 0.16
   const ENGINE_L = 0.1
   const SEAM = 0.008
-  /** Pull nozzle forward so it visibly seats into the skirt (cone/cylinder bounds leave a hairline gap otherwise). */
-  const NOZZLE_INTO_SKIRT = 0.048
-  /** Skirt narrow end must sit slightly into the service aft face or a black seam shows between cylinders. */
-  const SKIRT_INTO_SERVICE = 0.042
+  /** Pull nozzle +Z into skirt base (cone wide end) to hide a ring-shaped seam. */
+  const NOZZLE_INTO_SKIRT = 0.078
+  /**
+   * Skirt narrow (+Z) ring nudged toward nose past flush with service aft so it overlaps the cylinder
+   * (subtracting here pulled the skirt aft and opened a visible gap).
+   */
+  const SKIRT_OVERLAP_INTO_SERVICE_Z = 0.024
 
   const crewZ = 0
   const noseZ = crewZ + CREW_L / 2 + NOSE_L / 2 - SEAM
   const serviceZ = crewZ - CREW_L / 2 - SERVICE_L / 2 + SEAM
-  const skirtZ = serviceZ - SERVICE_L / 2 - SKIRT_L / 2 - SKIRT_INTO_SERVICE
+  const skirtZ =
+    serviceZ - SERVICE_L / 2 - SKIRT_L / 2 + SKIRT_OVERLAP_INTO_SERVICE_Z
   // Engine shifted +Z slightly into skirt base; plumes still anchor from engine aft.
   const engineZ = skirtZ - SKIRT_L / 2 - ENGINE_L / 2 + NOZZLE_INTO_SKIRT
   const engineAftZ = engineZ - ENGINE_L / 2
   const PLUME1_H = 0.24
   const PLUME2_H = 0.34
+  /** Bury plume apex slightly into the bell so a sliver of black does not show between grey and orange. */
+  const PLUME_INTO_BELL_Z = 0.02
   // Cone apex is toward +Z after π/2 X rot; center so apex sits on engine bell (−Z end of engine).
-  const plume1Z = engineAftZ - PLUME1_H / 2
-  const plume2Z = engineAftZ - PLUME2_H / 2
+  const plume1Z = engineAftZ - PLUME1_H / 2 + PLUME_INTO_BELL_Z
+  const plume2Z = engineAftZ - PLUME2_H / 2 + PLUME_INTO_BELL_Z
 
   return (
     <group ref={group}>
@@ -788,7 +796,7 @@ function AdaptiveEmbedFraming({
     // Tighten framing for ultra-wide aspects by reducing FOV and pulling the camera in slightly.
     const aspect = size.width / Math.max(1, size.height)
     const wideT = THREE.MathUtils.clamp((aspect - 1.7) / 1.1, 0, 1) // starts affecting ~1.7:1+
-    const desiredFov = THREE.MathUtils.lerp(44, 36, wideT)
+    const desiredFov = THREE.MathUtils.lerp(40, 33, wideT)
     camera.fov = desiredFov
     camera.updateProjectionMatrix()
 
@@ -946,7 +954,7 @@ export function TrajectoryView({
             >
               <Canvas
                 className="trajectory-canvas"
-                camera={{ position: initialView.position, fov: 44 }}
+                camera={{ position: initialView.position, fov: 40 }}
                 dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 2)]}
                 gl={{
                   antialias: true,
@@ -970,7 +978,7 @@ export function TrajectoryView({
           </div>
         </div>
 
-        <aside className="trajectory-telemetry-column" aria-label="Telemetry alongside mission view">
+        <aside className="trajectory-telemetry-column" aria-label="Telemetry below mission view">
           <TelemetryPanel
             embedded
             data={telemetry}
