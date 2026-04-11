@@ -3,7 +3,9 @@ import { DEFAULT_MISSION_HOURS, getMissionElapsedHours } from '../lib/missionTim
 
 export function useMissionReplay() {
   const [now, setNow] = useState(() => new Date())
-  const [followLive, setFollowLive] = useState(true)
+  // Always open at MET 0 (replay). A ~10-day flight stays under 240h wall MET for most of the window,
+  // so gating on “mission over” never switched users off live clock — they saw mid-mission instead of launch.
+  const [followLive, setFollowLive] = useState(false)
   const [scrubHours, setScrubHours] = useState(0)
 
   useEffect(() => {
