@@ -39,9 +39,9 @@ export function MissionReplayControls({
         </span>
       </div>
       <p className="replay-help">
-        Scrub mission elapsed time to move Orion along the 3D path. Values follow the app’s reference
-        timeline (not official ephemeris). The page opens at MET 0; use “Jump to live clock” to follow
-        wall time from T0 (after {DEFAULT_MISSION_HOURS}h MET that clock loops the same modeled profile).
+        Replay auto-plays the modeled timeline (loops); scrub the slider to jump. Values are the app’s
+        reference profile (not official ephemeris). “Jump to live clock” follows wall time from T0 (then
+        loops every {DEFAULT_MISSION_HOURS}h MET).
       </p>
       <div className="replay-row">
         <label className="replay-label mono" htmlFor="met-scrub">
